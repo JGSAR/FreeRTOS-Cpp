@@ -28,8 +28,8 @@
 #ifndef FREERTOS_KERNEL_HPP
 #define FREERTOS_KERNEL_HPP
 
-#include "FreeRTOS.h"
-#include "task.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 
 namespace FreeRTOS {
 
@@ -105,7 +105,7 @@ inline UBaseType_t getNumberOfTasks() { return uxTaskGetNumberOfTasks(); }
  * make the timer at least 10 times the frequency of the tick count.
  */
 inline TickType_t getIdleRunTimeCounter() {
-  return xTaskGetIdleRunTimeCounter();
+  return ulTaskGetIdleRunTimeCounter();
 }
 #endif /* INCLUDE_xTaskGetIdleTaskHandle && configGENERATE_RUN_TIME_STATS*/
 
@@ -168,7 +168,7 @@ inline void yield() { taskYIELD(); }
  * <b>Example Usage</b>
  * @include Kernel/enterExitCritical.cpp
  */
-inline void enterCritical() { taskENTER_CRITICAL(); }
+inline void enterCritical() { vPortEnterCritical(); } //taskENTER_CRITICAL(); }
 
 /**
  * Kernel.hpp
@@ -210,7 +210,7 @@ inline uint32_t enterCriticalFromISR() { return taskENTER_CRITICAL_FROM_ISR(); }
  * <b>Example Usage</b>
  * @include Kernel/enterExitCritical.cpp
  */
-inline void exitCritical() { taskEXIT_CRITICAL(); }
+inline void exitCritical() { vPortExitCritical(); } // taskEXIT_CRITICAL(); }
 
 /**
  * Kernel.hpp

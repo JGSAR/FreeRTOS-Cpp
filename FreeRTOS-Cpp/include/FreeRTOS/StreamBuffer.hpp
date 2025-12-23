@@ -28,8 +28,8 @@
 #ifndef FREERTOS_STREAMBUFFER_HPP
 #define FREERTOS_STREAMBUFFER_HPP
 
-#include "FreeRTOS.h"
-#include "stream_buffer.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/stream_buffer.h"
 
 namespace FreeRTOS {
 

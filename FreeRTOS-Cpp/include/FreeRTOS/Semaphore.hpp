@@ -28,8 +28,8 @@
 #ifndef FREERTOS_SEMAPHORE_HPP
 #define FREERTOS_SEMAPHORE_HPP
 
-#include "FreeRTOS.h"
-#include "semphr.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/semphr.h"
 
 namespace FreeRTOS {
 

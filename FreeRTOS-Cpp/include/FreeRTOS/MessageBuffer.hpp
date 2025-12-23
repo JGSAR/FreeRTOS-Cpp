@@ -28,8 +28,8 @@
 #ifndef FREERTOS_MESSAGEBUFFER_HPP
 #define FREERTOS_MESSAGEBUFFER_HPP
 
-#include "FreeRTOS.h"
-#include "message_buffer.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/message_buffer.h"
 
 namespace FreeRTOS {
 

@@ -32,8 +32,8 @@
 #include <bitset>
 #include <utility>
 
-#include "FreeRTOS.h"
-#include "task.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 
 /**
  * @brief C function that is used to interface this class with the FreeRTOS

@@ -28,8 +28,8 @@
 #ifndef FREERTOS_TIMER_HPP
 #define FREERTOS_TIMER_HPP
 
-#include "FreeRTOS.h"
-#include "timers.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/timers.h"
 
 /**
  * @brief C function that is used to interface this class with the FreeRTOS

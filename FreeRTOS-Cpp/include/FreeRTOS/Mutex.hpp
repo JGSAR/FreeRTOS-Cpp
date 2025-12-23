@@ -28,8 +28,8 @@
 #ifndef FREERTOS_MUTEX_HPP
 #define FREERTOS_MUTEX_HPP
 
-#include "FreeRTOS.h"
-#include "semphr.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/semphr.h"
 
 namespace FreeRTOS {
 

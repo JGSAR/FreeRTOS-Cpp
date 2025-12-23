@@ -30,8 +30,8 @@
 
 #include <bitset>
 
-#include "FreeRTOS.h"
-#include "event_groups.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/event_groups.h"
 
 namespace FreeRTOS {
 
