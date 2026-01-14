@@ -30,10 +30,8 @@
 
 #include <bitset>
 
-#include "FreeRTOS.h"
-#include "event_groups.h"
-
-#if (configUSE_EVENT_GROUPS == 1)
+#include "freertos/FreeRTOS.h"
+#include "freertos/event_groups.h"
 
 namespace FreeRTOS {
 
@@ -54,24 +52,13 @@ class EventGroupBase {
   EventGroupBase(const EventGroupBase&) = delete;
   EventGroupBase& operator=(const EventGroupBase&) = delete;
 
+  static void* operator new(size_t, void* ptr) { return ptr; }
+  static void* operator new[](size_t, void* ptr) { return ptr; }
   static void* operator new(size_t) = delete;
   static void* operator new[](size_t) = delete;
 
-  static void* operator new(size_t, void* ptr) {
-    return ptr;
-  }
-
-  static void* operator new[](size_t, void* ptr) {
-    return ptr;
-  }
-
-#if (configTICK_TYPE_WIDTH_IN_BITS == TICK_TYPE_WIDTH_16_BITS)
-  using EventBits = std::bitset<8>;  // NOLINT
-#elif (configTICK_TYPE_WIDTH_IN_BITS == TICK_TYPE_WIDTH_32_BITS)
-  using EventBits = std::bitset<24>;  // NOLINT
-#elif (configTICK_TYPE_WIDTH_IN_BITS == TICK_TYPE_WIDTH_64_BITS)
-  using EventBits = std::bitset<56>;  // NOLINT
-#endif
+  // NOLINTNEXTLINE
+  using EventBits = std::bitset<((configUSE_16_BIT_TICKS == 1) ? 8 : 24)>;
 
   /**
    * EventGroups.hpp
@@ -83,9 +70,7 @@ class EventGroupBase {
    * @retval true the handle is not NULL.
    * @retval false the handle is NULL.
    */
-  inline bool isValid() const {
-    return (handle != NULL);
-  }
+  inline bool isValid() const { return (handle != NULL); }
 
   /**
    * EventGroups.hpp
@@ -231,8 +216,8 @@ class EventGroupBase {
   inline bool setFromISR(bool& higherPriorityTaskWoken,
                          const EventBits& bitsToSet) const {
     BaseType_t taskWoken = pdFALSE;
-    const bool result = (xEventGroupSetBitsFromISR(handle, bitsToSet.to_ulong(),
-                                                   &taskWoken) == pdPASS);
+    bool result = (xEventGroupSetBitsFromISR(handle, bitsToSet.to_ulong(),
+                                             &taskWoken) == pdPASS);
     if (taskWoken == pdTRUE) {
       higherPriorityTaskWoken = true;
     }
@@ -321,9 +306,7 @@ class EventGroupBase {
    * @return EventBits The value of the event bits in the event group at the
    * time get() was called.
    */
-  inline EventBits get() const {
-    return EventBits(xEventGroupGetBits(handle));
-  }
+  inline EventBits get() const { return EventBits(xEventGroupGetBits(handle)); }
 
   /**
    * EventGroups.hpp
@@ -409,9 +392,7 @@ class EventGroupBase {
    * Tasks that are blocked on the event group being deleted will be unblocked,
    * and report an event group value of 0.
    */
-  ~EventGroupBase() {
-    vEventGroupDelete(this->handle);
-  };
+  ~EventGroupBase() { vEventGroupDelete(this->handle); };
 
   EventGroupBase(EventGroupBase&&) noexcept = default;
   EventGroupBase& operator=(EventGroupBase&&) noexcept = default;
@@ -455,9 +436,7 @@ class EventGroup : public EventGroupBase {
    * <b>Example Usage</b>
    * @include EventGroups/eventGroup.cpp
    */
-  EventGroup() {
-    this->handle = xEventGroupCreate();
-  }
+  EventGroup() { this->handle = xEventGroupCreate(); }
   ~EventGroup() = default;
 
   EventGroup(const EventGroup&) = delete;
@@ -520,7 +499,5 @@ class StaticEventGroup : public EventGroupBase {
 #endif /* configSUPPORT_STATIC_ALLOCATION */
 
 }  // namespace FreeRTOS
-
-#endif /* configUSE_EVENT_GROUPS */
 
 #endif  // FREERTOS_EVENTGROUPS_HPP

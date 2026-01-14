@@ -28,8 +28,8 @@
 #ifndef FREERTOS_SEMAPHORE_HPP
 #define FREERTOS_SEMAPHORE_HPP
 
-#include "FreeRTOS.h"
-#include "semphr.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/semphr.h"
 
 namespace FreeRTOS {
 
@@ -54,16 +54,10 @@ class SemaphoreBase {
   SemaphoreBase(const SemaphoreBase&) = delete;
   SemaphoreBase& operator=(const SemaphoreBase&) = delete;
 
+  static void* operator new(size_t, void* ptr) { return ptr; }
+  static void* operator new[](size_t, void* ptr) { return ptr; }
   static void* operator new(size_t) = delete;
   static void* operator new[](size_t) = delete;
-
-  static void* operator new(size_t, void* ptr) {
-    return ptr;
-  }
-
-  static void* operator new[](size_t, void* ptr) {
-    return ptr;
-  }
 
   /**
    * Semaphore.hpp
@@ -74,9 +68,7 @@ class SemaphoreBase {
    * @retval true the handle is not NULL.
    * @retval false the handle is NULL.
    */
-  inline bool isValid() const {
-    return (handle != NULL);
-  }
+  inline bool isValid() const { return (handle != NULL); }
 
   /**
    * Semaphore.hpp
@@ -93,9 +85,7 @@ class SemaphoreBase {
    * semaphore then 1 is returned if the semaphore is available, and 0 is
    * returned if the semaphore is not available.
    */
-  inline UBaseType_t getCount() const {
-    return uxSemaphoreGetCount(handle);
-  }
+  inline UBaseType_t getCount() const { return uxSemaphoreGetCount(handle); }
 
   /**
    * Semaphore.hpp
@@ -157,7 +147,7 @@ class SemaphoreBase {
    */
   inline bool takeFromISR(bool& higherPriorityTaskWoken) const {
     BaseType_t taskWoken = pdFALSE;
-    const bool result = (xSemaphoreTakeFromISR(handle, &taskWoken) == pdTRUE);
+    bool result = (xSemaphoreTakeFromISR(handle, &taskWoken) == pdTRUE);
     if (taskWoken == pdTRUE) {
       higherPriorityTaskWoken = true;
     }
@@ -199,9 +189,7 @@ class SemaphoreBase {
    * <b>Example Usage</b>
    * @include Semaphore/give.cpp
    */
-  inline bool give() const {
-    return (xSemaphoreGive(handle) == pdTRUE);
-  }
+  inline bool give() const { return (xSemaphoreGive(handle) == pdTRUE); }
 
   /**
    * Semaphore.hpp
@@ -228,7 +216,7 @@ class SemaphoreBase {
    */
   inline bool giveFromISR(bool& higherPriorityTaskWoken) const {
     BaseType_t taskWoken = pdFALSE;
-    const bool result = (xSemaphoreGiveFromISR(handle, &taskWoken) == pdTRUE);
+    bool result = (xSemaphoreGiveFromISR(handle, &taskWoken) == pdTRUE);
     if (taskWoken == pdTRUE) {
       higherPriorityTaskWoken = true;
     }
@@ -263,9 +251,7 @@ class SemaphoreBase {
    * @note Do not delete a semaphore that has tasks blocked on it (tasks that
    * are in the Blocked state waiting for the semaphore to become available).
    */
-  ~SemaphoreBase() {
-    vSemaphoreDelete(this->handle);
-  }
+  ~SemaphoreBase() { vSemaphoreDelete(this->handle); }
 
   SemaphoreBase(SemaphoreBase&&) noexcept = default;
   SemaphoreBase& operator=(SemaphoreBase&&) noexcept = default;
@@ -337,9 +323,7 @@ class BinarySemaphore : public SemaphoreBase {
    * <b>Example Usage</b>
    * @include Semaphore/binarySemaphore.cpp
    */
-  BinarySemaphore() {
-    this->handle = xSemaphoreCreateBinary();
-  }
+  BinarySemaphore() { this->handle = xSemaphoreCreateBinary(); }
   ~BinarySemaphore() = default;
 
   BinarySemaphore(const BinarySemaphore&) = delete;

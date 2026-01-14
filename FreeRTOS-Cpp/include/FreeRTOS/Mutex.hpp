@@ -28,8 +28,8 @@
 #ifndef FREERTOS_MUTEX_HPP
 #define FREERTOS_MUTEX_HPP
 
-#include "FreeRTOS.h"
-#include "semphr.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/semphr.h"
 
 namespace FreeRTOS {
 
@@ -55,16 +55,10 @@ class MutexBase {
   MutexBase(const MutexBase&) = delete;
   MutexBase& operator=(const MutexBase&) = delete;
 
+  static void* operator new(size_t, void* ptr) { return ptr; }
+  static void* operator new[](size_t, void* ptr) { return ptr; }
   static void* operator new(size_t) = delete;
   static void* operator new[](size_t) = delete;
-
-  static void* operator new(size_t, void* ptr) {
-    return ptr;
-  }
-
-  static void* operator new[](size_t, void* ptr) {
-    return ptr;
-  }
 
   /**
    * Mutex.hpp
@@ -75,9 +69,7 @@ class MutexBase {
    * @retval true the handle is not NULL.
    * @retval false the handle is NULL.
    */
-  inline bool isValid() const {
-    return (handle != NULL);
-  }
+  inline bool isValid() const { return (handle != NULL); }
 
   /**
    * Mutex.hpp
@@ -122,7 +114,7 @@ class MutexBase {
    */
   inline bool lockFromISR(bool& higherPriorityTaskWoken) const {
     BaseType_t taskWoken = pdFALSE;
-    const bool result = (xSemaphoreTakeFromISR(handle, &taskWoken) == pdTRUE);
+    bool result = (xSemaphoreTakeFromISR(handle, &taskWoken) == pdTRUE);
     if (taskWoken == pdTRUE) {
       higherPriorityTaskWoken = true;
     }
@@ -161,9 +153,7 @@ class MutexBase {
    * <b>Example Usage</b>
    * @include Mutex/unlock.cpp
    */
-  inline bool unlock() const {
-    return (xSemaphoreGive(handle) == pdTRUE);
-  }
+  inline bool unlock() const { return (xSemaphoreGive(handle) == pdTRUE); }
 
  private:
   MutexBase() = default;
@@ -179,9 +169,7 @@ class MutexBase {
    * @note Do not delete a mutex that has tasks blocked on it (tasks that are in
    * the Blocked state waiting for the mutex to become available).
    */
-  ~MutexBase() {
-    vSemaphoreDelete(this->handle);
-  }
+  ~MutexBase() { vSemaphoreDelete(this->handle); }
 
   MutexBase(MutexBase&&) noexcept = default;
   MutexBase& operator=(MutexBase&&) noexcept = default;
@@ -317,9 +305,7 @@ class Mutex : public MutexBase {
    * <b>Example Usage</b>
    * @include Mutex/mutex.cpp
    */
-  Mutex() {
-    this->handle = xSemaphoreCreateMutex();
-  }
+  Mutex() { this->handle = xSemaphoreCreateMutex(); }
   ~Mutex() = default;
 
   Mutex(const Mutex&) = delete;
@@ -372,9 +358,7 @@ class RecursiveMutex : public RecursiveMutexBase {
    * <b>Example Usage</b>
    * @include Mutex/recursiveMutex.cpp
    */
-  RecursiveMutex() {
-    this->handle = xSemaphoreCreateRecursiveMutex();
-  }
+  RecursiveMutex() { this->handle = xSemaphoreCreateRecursiveMutex(); }
   ~RecursiveMutex() = default;
 
   RecursiveMutex(const RecursiveMutex&) = delete;
@@ -432,9 +416,7 @@ class StaticMutex : public MutexBase {
    * <b>Example Usage</b>
    * @include Mutex/staticMutex.cpp
    */
-  StaticMutex() {
-    this->handle = xSemaphoreCreateMutexStatic(&staticMutex);
-  }
+  StaticMutex() { this->handle = xSemaphoreCreateMutexStatic(&staticMutex); }
   ~StaticMutex() = default;
 
   StaticMutex(const StaticMutex&) = delete;

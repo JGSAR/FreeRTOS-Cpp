@@ -28,8 +28,8 @@
 #ifndef FREERTOS_TIMER_HPP
 #define FREERTOS_TIMER_HPP
 
-#include "FreeRTOS.h"
-#include "timers.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/timers.h"
 
 /**
  * @brief C function that is used to interface this class with the FreeRTOS
@@ -61,16 +61,10 @@ class TimerBase {
   TimerBase(const TimerBase&) = delete;
   TimerBase& operator=(const TimerBase&) = delete;
 
+  static void* operator new(size_t, void* ptr) { return ptr; }
+  static void* operator new[](size_t, void* ptr) { return ptr; }
   static void* operator new(size_t) = delete;
   static void* operator new[](size_t) = delete;
-
-  static void* operator new(size_t, void* ptr) {
-    return ptr;
-  }
-
-  static void* operator new[](size_t, void* ptr) {
-    return ptr;
-  }
 
   /**
    * Timer.hpp
@@ -81,9 +75,7 @@ class TimerBase {
    * interface function <tt>callTimerFunction()</tt> and should not be called or
    * referenced by the user.
    */
-  virtual inline void timerEntry() final {
-    timerFunction();
-  }
+  virtual inline void timerEntry() final { timerFunction(); }
 
   /**
    * Timer.hpp
@@ -95,9 +87,7 @@ class TimerBase {
    * @return false If the timer was not created successfully due to insufficient
    * memory.
    */
-  inline bool isValid() const {
-    return (handle != NULL);
-  }
+  inline bool isValid() const { return (handle != NULL); }
 
   /**
    * Timer.hpp
@@ -205,7 +195,7 @@ class TimerBase {
    */
   inline bool startFromISR(bool& higherPriorityTaskWoken) const {
     BaseType_t taskWoken = pdFALSE;
-    const bool result = (xTimerStartFromISR(handle, &taskWoken) == pdPASS);
+    bool result = (xTimerStartFromISR(handle, &taskWoken) == pdPASS);
     if (taskWoken == pdTRUE) {
       higherPriorityTaskWoken = true;
     }
@@ -294,7 +284,7 @@ class TimerBase {
    */
   inline bool stopFromISR(bool& higherPriorityTaskWoken) const {
     BaseType_t taskWoken = pdFALSE;
-    const bool result = (xTimerStopFromISR(handle, &taskWoken) == pdPASS);
+    bool result = (xTimerStopFromISR(handle, &taskWoken) == pdPASS);
     if (taskWoken == pdTRUE) {
       higherPriorityTaskWoken = true;
     }
@@ -402,7 +392,7 @@ class TimerBase {
   inline bool changePeriodFromISR(bool& higherPriorityTaskWoken,
                                   const TickType_t newPeriod) const {
     BaseType_t taskWoken = pdFALSE;
-    const bool result =
+    bool result =
         (xTimerChangePeriodFromISR(handle, newPeriod, &taskWoken) == pdPASS);
     if (taskWoken == pdTRUE) {
       higherPriorityTaskWoken = true;
@@ -546,7 +536,7 @@ class TimerBase {
    */
   inline bool resetFromISR(bool& higherPriorityTaskWoken) const {
     BaseType_t taskWoken = pdFALSE;
-    const bool result = (xTimerResetFromISR(handle, &taskWoken) == pdPASS);
+    bool result = (xTimerResetFromISR(handle, &taskWoken) == pdPASS);
     if (taskWoken == pdTRUE) {
       higherPriorityTaskWoken = true;
     }
@@ -571,7 +561,7 @@ class TimerBase {
    * Timer.hpp
    *
    * @brief Function that calls <tt>void vTimerSetReloadMode( TimerHandle_t
-   * xTimer, const UBaseType_t xAutoReload )</tt>
+   * xTimer, const UBaseType_t uxAutoReload )</tt>
    *
    * @see <https://www.freertos.org/FreeRTOS-Timers-vTimerSetReloadMode.html>
    *
@@ -609,9 +599,7 @@ class TimerBase {
    * <b>Example Usage</b>
    * @include Timer/getName.cpp
    */
-  inline const char* getName() const {
-    return pcTimerGetName(handle);
-  }
+  inline const char* getName() const { return pcTimerGetName(handle); }
 
   /**
    * Timer.hpp
@@ -632,9 +620,7 @@ class TimerBase {
    * <b>Example Usage</b>
    * @include Timer/getPeriod.cpp
    */
-  inline TickType_t getPeriod() const {
-    return xTimerGetPeriod(handle);
-  }
+  inline TickType_t getPeriod() const { return xTimerGetPeriod(handle); }
 
   /**
    * Timer.hpp
@@ -706,9 +692,7 @@ class TimerBase {
    *
    * @return TickType_t Delete block time in ticks.
    */
-  inline TickType_t getDeleteBlockTime() const {
-    return deleteBlockTime;
-  }
+  inline TickType_t getDeleteBlockTime() const { return deleteBlockTime; }
 
  protected:
   /**
@@ -786,7 +770,7 @@ class Timer : public TimerBase {
    *
    * @brief Construct a new Timer object by calling <tt>TimerHandle_t
    * xTimerCreate( const char * const pcTimerName, const TickType_t
-   * xTimerPeriod, const UBaseType_t xAutoReload, void * const pvTimerID,
+   * xTimerPeriod, const UBaseType_t uxAutoReload, void * const pvTimerID,
    * TimerCallbackFunction_t pxCallbackFunction )</tt>
    *
    * @see <https://www.freertos.org/FreeRTOS-timers-xTimerCreate.html>
@@ -876,7 +860,7 @@ class StaticTimer : public TimerBase {
    *
    * @brief Construct a new StaticTimer object by calling <tt>TimerHandle_t
    * xTimerCreateStatic( const char * const pcTimerName, const TickType_t
-   * xTimerPeriod, const UBaseType_t xAutoReload, void * const pvTimerID,
+   * xTimerPeriod, const UBaseType_t uxAutoReload, void * const pvTimerID,
    * TimerCallbackFunction_t pxCallbackFunction StaticTimer_t *pxTimerBuffer
    * )</tt>
    *

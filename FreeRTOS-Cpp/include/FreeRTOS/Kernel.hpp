@@ -28,8 +28,8 @@
 #ifndef FREERTOS_KERNEL_HPP
 #define FREERTOS_KERNEL_HPP
 
-#include "FreeRTOS.h"
-#include "task.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
 
 namespace FreeRTOS {
 
@@ -81,9 +81,7 @@ inline SchedulerState getSchedulerState() {
  * task that has been deleted but not yet freed by the idle task will also be
  * included in the count.
  */
-inline UBaseType_t getNumberOfTasks() {
-  return uxTaskGetNumberOfTasks();
-}
+inline UBaseType_t getNumberOfTasks() { return uxTaskGetNumberOfTasks(); }
 
 #if (INCLUDE_xTaskGetIdleTaskHandle == 1 && configGENERATE_RUN_TIME_STATS == 1)
 /**
@@ -107,7 +105,7 @@ inline UBaseType_t getNumberOfTasks() {
  * make the timer at least 10 times the frequency of the tick count.
  */
 inline TickType_t getIdleRunTimeCounter() {
-  return xTaskGetIdleRunTimeCounter();
+  return ulTaskGetIdleRunTimeCounter();
 }
 #endif /* INCLUDE_xTaskGetIdleTaskHandle && configGENERATE_RUN_TIME_STATS*/
 
@@ -121,9 +119,7 @@ inline TickType_t getIdleRunTimeCounter() {
  * @retval TickType_t The count of ticks since
  * FreeRTOS::Kernel::startScheduler() was called.
  */
-inline TickType_t getTickCount() {
-  return xTaskGetTickCount();
-}
+inline TickType_t getTickCount() { return xTaskGetTickCount(); }
 
 /**
  * Kernel.hpp
@@ -140,9 +136,7 @@ inline TickType_t getTickCount() {
  * microcontroller being used or interrupt nesting is either not supported or
  * not being used.
  */
-inline TickType_t getTickCountFromISR() {
-  return xTaskGetTickCountFromISR();
-}
+inline TickType_t getTickCountFromISR() { return xTaskGetTickCountFromISR(); }
 
 /**
  *Kernel.hpp
@@ -156,9 +150,7 @@ inline TickType_t getTickCountFromISR() {
  *the task that calls FreeRTOS::Kernel::yield() then the RTOS scheduler will
  *simply select the task that called FreeRTOS::Kernel::yield() to run again.
  */
-inline void yield() {
-  taskYIELD();
-}
+inline void yield() { taskYIELD(); }
 
 /**
  * Kernel.hpp
@@ -176,9 +168,7 @@ inline void yield() {
  * <b>Example Usage</b>
  * @include Kernel/enterExitCritical.cpp
  */
-inline void enterCritical() {
-  taskENTER_CRITICAL();
-}
+inline void enterCritical() { vPortEnterCritical(); } //taskENTER_CRITICAL(); }
 
 /**
  * Kernel.hpp
@@ -202,9 +192,7 @@ inline void enterCritical() {
  * <b>Example Usage</b>
  * @include Kernel/enterExitCriticalFromISR.cpp
  */
-inline uint32_t enterCriticalFromISR() {
-  return taskENTER_CRITICAL_FROM_ISR();
-}
+inline uint32_t enterCriticalFromISR() { return taskENTER_CRITICAL_FROM_ISR(); }
 
 /**
  * Kernel.hpp
@@ -222,9 +210,7 @@ inline uint32_t enterCriticalFromISR() {
  * <b>Example Usage</b>
  * @include Kernel/enterExitCritical.cpp
  */
-inline void exitCritical() {
-  taskEXIT_CRITICAL();
-}
+inline void exitCritical() { vPortExitCritical(); } // taskEXIT_CRITICAL(); }
 
 /**
  * Kernel.hpp
@@ -260,9 +246,7 @@ inline void exitCriticalFromISR(const uint32_t interruptStatus) {
  *
  * Function to disable all maskable interrupts.
  */
-inline void disableInterrupts() {
-  taskDISABLE_INTERRUPTS();
-}
+inline void disableInterrupts() { taskDISABLE_INTERRUPTS(); }
 
 /**
  * Kernel.hpp
@@ -273,9 +257,7 @@ inline void disableInterrupts() {
  *
  * Function to enable microcontroller interrupts.
  */
-inline void enableInterrupts() {
-  taskENABLE_INTERRUPTS();
-}
+inline void enableInterrupts() { taskENABLE_INTERRUPTS(); }
 
 /**
  * Kernel.hpp
@@ -290,9 +272,7 @@ inline void enableInterrupts() {
  * <b>Example Usage</b>
  * @include Kernel/startScheduler.cpp
  */
-inline void startScheduler() {
-  vTaskStartScheduler();
-}
+inline void startScheduler() { vTaskStartScheduler(); }
 
 /**
  * Kernel.hpp
@@ -325,9 +305,7 @@ inline void startScheduler() {
  * <b>Example Usage</b>
  * @include Kernel/endScheduler.cpp
  */
-inline void endScheduler() {
-  vTaskEndScheduler();
-}
+inline void endScheduler() { vTaskEndScheduler(); }
 
 /**
  * Kernel.hpp
@@ -350,9 +328,7 @@ inline void endScheduler() {
  * <b>Example Usage</b>
  * @include Kernel/suspendAll.cpp
  */
-inline void suspendAll() {
-  vTaskSuspendAll();
-}
+inline void suspendAll() { vTaskSuspendAll(); }
 
 /**
  * Kernel.hpp
@@ -374,11 +350,8 @@ inline void suspendAll() {
  * <b>Example Usage</b>
  * @include Kernel/resumeAll.cpp
  */
-inline bool resumeAll() {
-  return (xTaskResumeAll() == pdTRUE);
-}
+inline bool resumeAll() { return (xTaskResumeAll() == pdTRUE); }
 
-#if (configUSE_TICKLESS_IDLE != 0)
 /**
  * Kernel.hpp
  *
@@ -399,7 +372,6 @@ inline bool resumeAll() {
 inline void stepTick(const TickType_t ticksToJump) {
   vTaskStepTick(ticksToJump);
 }
-#endif /* configUSE_TICKLESS_IDLE */
 
 /**
  * Kernel.hpp
