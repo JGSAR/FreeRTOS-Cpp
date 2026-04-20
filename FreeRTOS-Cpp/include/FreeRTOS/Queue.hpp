@@ -558,8 +558,10 @@ class QueueBase {
    *
    * @return If the queue referenced by the queue is in the queue registry, then
    * the text name of the queue is returned, otherwise NULL is returned.
-   */
+   */ // 
+#if configQUEUE_REGISTRY_SIZE  != 0
   inline const char* getName() const { return pcQueueGetName(handle); }
+#endif
 
   /**
    * Queue.hpp
