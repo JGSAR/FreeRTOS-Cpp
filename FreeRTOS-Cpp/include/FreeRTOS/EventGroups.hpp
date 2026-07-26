@@ -325,6 +325,8 @@ class EventGroupBase {
     return EventBits(xEventGroupGetBitsFromISR(handle));
   }
 
+  inline EventGroupHandle_t getHandle()const{return handle;}
+
   /**
    * EventGroups.hpp
    *
